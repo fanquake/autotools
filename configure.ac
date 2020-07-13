@@ -49,6 +49,11 @@ LT_PREREQ([2.4.0])
 dnl Libtool init checks
 LT_INIT([pic-only])
 
+dnl check for base programs
+AC_PATH_TOOL(AR, ar)
+AC_PATH_TOOL(RANLIB, ranlib)
+AC_PATH_TOOL(STRIP, strip)
+
 dnl Check for a flag to turn compiler warnings into errors.
 dnl This will be used when testing for the availability of compile flags
 AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
