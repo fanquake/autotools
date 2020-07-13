@@ -45,6 +45,20 @@ LT_PREREQ([2.4.0])
 dnl Libtool init checks
 LT_INIT([pic-only])
 
+dnl Check for a flag to turn compiler warnings into errors.
+dnl This will be used when testing for the availability of compile flags
+AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
+
+dnl Check for a flag to turn linker warnings into errors.
+dnl This will be used when testing for the availability of linker flags.
+case $host in
+    *darwin*)
+        AX_CHECK_LINK_FLAG([-Wl,-fatal_warnings],[LDFLAG_WERROR="-Wl,-fatal_warnings"],[LDFLAG_WERROR=""])
+        ;;
+    *)
+        AX_CHECK_LINK_FLAG([-Wl,--fatal-warnings],[LDFLAG_WERROR="-Wl,--fatal-warnings"],[LDFLAG_WERROR=""])
+        ;;
+esac
 case $host in
     *mingw*)
         TARGET_OS=windows
