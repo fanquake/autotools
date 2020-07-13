@@ -86,7 +86,6 @@ case $host in
         AX_CHECK_LINK_FLAG([[-Wl,-headerpad_max_install_names]], [LDFLAGS="$LDFLAGS -Wl,-headerpad_max_install_names"],, [[$LDFLAG_WERROR]])
         ;;
     *linux*)
-        TARGET_OS=linux
         ;;
 esac
 
@@ -121,6 +120,19 @@ dnl test for visibility attributes
 AX_GCC_FUNC_ATTRIBUTE([visibility])
 AX_GCC_FUNC_ATTRIBUTE([dllexport])
 
+dnl option to reduce exports
+AC_ARG_ENABLE([reduce-exports],
+  [AS_HELP_STRING([--enable-reduce-exports],
+  [attempt to reduce exported symbols in the resulting executables (default is no)])],
+  [use_reduce_exports=$enableval],
+  [use_reduce_exports=no])
+
+if test x$use_reduce_exports = xyes; then
+  AX_CHECK_COMPILE_FLAG([-fvisibility=hidden],[RE_CXXFLAGS="-fvisibility=hidden"],
+  [AC_MSG_ERROR([Cannot set hidden symbol visibility. Use --disable-reduce-exports.])])
+
+  AX_CHECK_LINK_FLAG([[-Wl,--exclude-libs,ALL]], [RE_LDFLAGS="-Wl,--exclude-libs,ALL"],, [[$LDFLAG_WERROR]])
+fi
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 AC_OUTPUT
