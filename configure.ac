@@ -23,6 +23,9 @@ AC_CONFIG_AUX_DIR([build-aux])
 dnl location of additional Autoconf macros
 AC_CONFIG_MACRO_DIR([build-aux/m4])
 
+dnl find pkg-config
+PKG_PROG_PKG_CONFIG
+
 dnl compute the host-system type variable
 dnl i.e x86_64-apple-darwin18.7.0
 AC_CANONICAL_HOST
