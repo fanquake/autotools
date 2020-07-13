@@ -28,7 +28,7 @@ dnl i.e x86_64-apple-darwin18.7.0
 AC_CANONICAL_HOST
 
 dnl initialize Automake
-AM_INIT_AUTOMAKE([no-define subdir-objects foreign])
+AM_INIT_AUTOMAKE([1.13 no-define subdir-objects foreign])
 
 dnl make the compilation flags quiet unless V=1 is used
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
