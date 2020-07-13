@@ -133,6 +133,7 @@ if test x$use_reduce_exports = xyes; then
 
   AX_CHECK_LINK_FLAG([[-Wl,--exclude-libs,ALL]], [RE_LDFLAGS="-Wl,--exclude-libs,ALL"],, [[$LDFLAG_WERROR]])
 fi
+AC_CONFIG_FILES([libboring.pc:libboring.pc.in])
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 AC_OUTPUT
