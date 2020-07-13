@@ -21,6 +21,7 @@ libtool
 
 *.lo
 *.la
+.libs
 .deps
 
 Makefile
