@@ -70,8 +70,8 @@ case $host in
 esac
 
 dnl set basic compiler warnings
-AX_CHECK_COMPILE_FLAG([-Wall],[CXXFLAGS="$CXXFLAGS -Wall"],,[[$CXXFLAG_WERROR]])
-AX_CHECK_COMPILE_FLAG([-Wextra],[CXXFLAGS="$CXXFLAGS -Wextra"],,[[$CXXFLAG_WERROR]])
+AX_CHECK_COMPILE_FLAG([-Wall],[WARN_CXXFLAGS="$WARN_CXXFLAGS -Wall"],,[[$CXXFLAG_WERROR]])
+AX_CHECK_COMPILE_FLAG([-Wextra],[WARN_CXXFLAGS="$WARN_CXXFLAGS -Wextra"],,[[$CXXFLAG_WERROR]])
 case $host in
     *mingw*)
         TARGET_OS=windows
@@ -84,6 +84,32 @@ case $host in
         ;;
 esac
 
+dnl setup hardening related compile flags and linker options
+dnl general
+AX_CHECK_COMPILE_FLAG([-Wstack-protector],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -Wstack-protector"],,[[$CXXFLAG_WERROR]])
+AX_CHECK_COMPILE_FLAG([-fstack-protector-all],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-protector-all"],,[[$CXXFLAG_WERROR]])
+AX_CHECK_LINK_FLAG([[-fPIE -pie]],[PIE_FLAGS="-fPIE"; HARDENED_LDFLAGS="$HARDENED_LDFLAGS -pie"],,[[$LDFLAG_WERROR]])
+
+if test x$TARGET_OS != xwindows; then
+  AX_CHECK_COMPILE_FLAG([-fPIC],[PIC_FLAGS="-fPIC"])
+fi
+
+dnl Test if _FORTIFY_SOURCE works. If it does, first undefine it, then redefine
+dnl it to =2. This works around toolchains where it may already be defined, and
+dnl just blindly appending would result in redefinition warnings.
+dnl TODO: swap out for the autoconf macro?
+AX_CHECK_PREPROC_FLAG([-D_FORTIFY_SOURCE=2],[AX_CHECK_PREPROC_FLAG([-U_FORTIFY_SOURCE],[HARDENED_CPPFLAGS="$HARDENED_CPPFLAGS -U_FORTIFY_SOURCE"]) HARDENED_CPPFLAGS="$HARDENED_CPPFLAGS -D_FORTIFY_SOURCE=2"])
+
+dnl windows
+AX_CHECK_LINK_FLAG([[-Wl,--dynamicbase]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,--dynamicbase"],,[[$LDFLAG_WERROR]])
+AX_CHECK_LINK_FLAG([[-Wl,--nxcompat]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,--nxcompat"],,[[$LDFLAG_WERROR]])
+AX_CHECK_LINK_FLAG([[-Wl,--high-entropy-va]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,--high-entropy-va"],,[[$LDFLAG_WERROR]])
+dnl linux
+AX_CHECK_LINK_FLAG([[-Wl,-z,relro]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,relro"],,[[$LDFLAG_WERROR]])
+AX_CHECK_LINK_FLAG([[-Wl,-z,now]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,now"],,[[$LDFLAG_WERROR]])
+AX_CHECK_LINK_FLAG([[-Wl,-z,separatecode]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,separatecode"],,[[$LDFLAG_WERROR]])
+dnl darwin
+AX_CHECK_LINK_FLAG([[-Wl,-bind_at_load]], [HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-bind_at_load"],, [[$LDFLAG_WERROR]])
 
 dnl test for visibility attributes
 AX_GCC_FUNC_ATTRIBUTE([visibility])
@@ -100,7 +126,9 @@ echo " target OS = $host_os"
 echo
 echo " CC        = $CC"
 echo " CFLAGS    = $CFLAGS"
-echo " CPPFLAGS  = $CPPFLAGS"
+echo " CPPFLAGS  = $HARDENED_CPPFLAGS $CPPFLAGS"
 echo " CXX       = $CXX"
-echo " CXXFLAGS  = $CXXFLAGS"
-echo " LDFLAGS   = $LDFLAGS $PIE_FLAGS"
+echo " CXXFLAGS  = $RE_CXXFLAGS $HARDENED_CXXFLAGS $WARN_CXXFLAGS $CXXFLAGS"
+echo " LDFLAGS   = $RE_LDFLAGS $HARDENED_LDFLAGS $LDFLAGS"
+echo " PIC_FLAGS = $PIC_FLAGS"
+echo " PIE_FLAGS = $PIE_FLAGS"
