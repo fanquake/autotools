@@ -75,6 +75,10 @@ case $host in
         ;;
 esac
 
+
+dnl test for visibility attributes
+AX_GCC_FUNC_ATTRIBUTE([visibility])
+AX_GCC_FUNC_ATTRIBUTE([dllexport])
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 AC_OUTPUT
