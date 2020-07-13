@@ -79,11 +79,19 @@ esac
 dnl test for visibility attributes
 AX_GCC_FUNC_ATTRIBUTE([visibility])
 AX_GCC_FUNC_ATTRIBUTE([dllexport])
+
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 AC_OUTPUT
 
 echo
 echo "Options used to compile and link:"
-echo " target OS = $TARGET_OS"
+echo " build OS  = $build_os"
+echo " target OS = $host_os"
+echo
+echo " CC        = $CC"
+echo " CFLAGS    = $CFLAGS"
+echo " CPPFLAGS  = $CPPFLAGS"
 echo " CXX       = $CXX"
+echo " CXXFLAGS  = $CXXFLAGS"
+echo " LDFLAGS   = $LDFLAGS $PIE_FLAGS"
