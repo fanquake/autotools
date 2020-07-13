@@ -32,6 +32,7 @@ AC_CANONICAL_HOST
 
 dnl initialize Automake
 AM_INIT_AUTOMAKE([1.13 no-define subdir-objects foreign])
+AM_MAINTAINER_MODE([enable])
 
 dnl make the compilation flags quiet unless V=1 is used
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
