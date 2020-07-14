@@ -93,7 +93,8 @@ dnl setup hardening related compile flags and linker options
 dnl general
 AX_CHECK_COMPILE_FLAG([-Wstack-protector],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -Wstack-protector"],,[[$CXXFLAG_WERROR]])
 AX_CHECK_COMPILE_FLAG([-fstack-protector-all],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-protector-all"],,[[$CXXFLAG_WERROR]])
-AX_CHECK_LINK_FLAG([[-fPIE -pie]],[PIE_FLAGS="-fPIE"; HARDENED_LDFLAGS="$HARDENED_LDFLAGS -pie"],,[[$LDFLAG_WERROR]])
+dnl TODO: note why this is CXXFLAG_WERROR
+AX_CHECK_LINK_FLAG([[-fPIE -pie]],[PIE_FLAGS="-fPIE"; HARDENED_LDFLAGS="$HARDENED_LDFLAGS -pie"],,[[$CXXFLAG_WERROR]])
 
 if test x$TARGET_OS != xwindows; then
   AX_CHECK_COMPILE_FLAG([-fPIC],[PIC_FLAGS="-fPIC"])
@@ -114,7 +115,7 @@ AX_CHECK_LINK_FLAG([[-Wl,-z,relro]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,
 AX_CHECK_LINK_FLAG([[-Wl,-z,now]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,now"],,[[$LDFLAG_WERROR]])
 AX_CHECK_LINK_FLAG([[-Wl,-z,separatecode]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,separatecode"],,[[$LDFLAG_WERROR]])
 dnl darwin
-AX_CHECK_LINK_FLAG([[-Wl,-bind_at_load]], [HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-bind_at_load"],, [[$LDFLAG_WERROR]])
+AX_CHECK_LINK_FLAG([[-Wl,-bind_at_load]], [HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-bind_at_load"],,[[$LDFLAG_WERROR]])
 
 dnl test for visibility attributes
 AX_GCC_FUNC_ATTRIBUTE([visibility])
@@ -123,7 +124,7 @@ AX_GCC_FUNC_ATTRIBUTE([dllexport])
 dnl option to reduce exports
 AC_ARG_ENABLE([reduce-exports],
   [AS_HELP_STRING([--enable-reduce-exports],
-  [attempt to reduce exported symbols in the resulting executables (default is no)])],
+  [reduce exported symbols in the resulting executable & library (default is no)])],
   [use_reduce_exports=$enableval],
   [use_reduce_exports=no])
 
@@ -133,6 +134,17 @@ if test x$use_reduce_exports = xyes; then
 
   AX_CHECK_LINK_FLAG([[-Wl,--exclude-libs,ALL]], [RE_LDFLAGS="-Wl,--exclude-libs,ALL"],, [[$LDFLAG_WERROR]])
 fi
+
+AC_SUBST(WARN_CXXFLAGS)
+AC_SUBST(HARDENED_CXXFLAGS)
+AC_SUBST(HARDENED_CPPFLAGS)
+AC_SUBST(HARDENED_LDFLAGS)
+AC_SUBST(RE_CXXFLAGS)
+AC_SUBST(RE_LDFLAGS)
+AC_SUBST(PIC_FLAGS)
+AC_SUBST(PIE_FLAGS)
+AC_SUBST(LIBTOOL_APP_LDFLAGS)
+
 AC_CONFIG_FILES([libboring.pc:libboring.pc.in])
 AC_CONFIG_FILES([Makefile src/Makefile])
 

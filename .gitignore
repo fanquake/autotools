@@ -19,6 +19,8 @@ config.status
 configure
 libtool
 
+*.o
+*.a
 *.lo
 *.la
 .libs
@@ -27,6 +29,6 @@ libtool
 Makefile
 src/Makefile
 
-src/basic_autotools
+src/basic_binary
 
 libboring.pc

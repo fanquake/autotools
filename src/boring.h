@@ -7,6 +7,8 @@
 
 #define BORING_LIBRARY_VERSION 1
 
+int some_internal_func(const int num);
+
 EXPORT_SYMBOL int some_func(const int num);
 
 EXPORT_SYMBOL unsigned int boring_library_version();
