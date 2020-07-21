@@ -1,6 +1,8 @@
 # Basic Autotools
 
-Basic Autotools usage with `C++17` code. A lot of what's done here is based off the [Bitcoin Core](https://github.com/bitcoin/bitcoin) Autotools setup.
+The purpose of this project is to demo some basic  auttools usage with modern c++ code.
+
+A lot of what's done here is based off of the [Bitcoin Core](https://github.com/bitcoin/bitcoin) build system.
 
 ## Usage
 
@@ -9,5 +11,8 @@ Basic Autotools usage with `C++17` code. A lot of what's done here is based off 
 ./configure
 make
 
-./src/basic_autotools
+./src/basic_binary
+Basic Autotools 0.0.1 Binary
+API Version: 1
+Calling some_func(2): 40
 ```

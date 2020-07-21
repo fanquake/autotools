@@ -90,7 +90,6 @@ case $host in
 esac
 
 dnl setup hardening related compile flags and linker options
-dnl general
 AX_CHECK_COMPILE_FLAG([-Wstack-protector],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -Wstack-protector"],,[[$CXXFLAG_WERROR]])
 AX_CHECK_COMPILE_FLAG([-fstack-protector-all],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-protector-all"],,[[$CXXFLAG_WERROR]])
 dnl TODO: note why this is CXXFLAG_WERROR
@@ -101,7 +100,7 @@ if test x$TARGET_OS != xwindows; then
 fi
 
 dnl Test if _FORTIFY_SOURCE works. If it does, first undefine it, then redefine
-dnl it to =2. This works around toolchains where it may already be defined, and
+dnl it to 2. This works around toolchains where it may already be defined, and
 dnl just blindly appending would result in redefinition warnings.
 dnl TODO: swap out for the autoconf macro?
 AX_CHECK_PREPROC_FLAG([-D_FORTIFY_SOURCE=2],[AX_CHECK_PREPROC_FLAG([-U_FORTIFY_SOURCE],[HARDENED_CPPFLAGS="$HARDENED_CPPFLAGS -U_FORTIFY_SOURCE"]) HARDENED_CPPFLAGS="$HARDENED_CPPFLAGS -D_FORTIFY_SOURCE=2"])
@@ -116,10 +115,6 @@ AX_CHECK_LINK_FLAG([[-Wl,-z,now]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,no
 AX_CHECK_LINK_FLAG([[-Wl,-z,separatecode]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,separatecode"],,[[$LDFLAG_WERROR]])
 dnl darwin
 AX_CHECK_LINK_FLAG([[-Wl,-bind_at_load]], [HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-bind_at_load"],,[[$LDFLAG_WERROR]])
-
-dnl test for visibility attributes
-AX_GCC_FUNC_ATTRIBUTE([visibility])
-AX_GCC_FUNC_ATTRIBUTE([dllexport])
 
 dnl option to reduce exports
 AC_ARG_ENABLE([reduce-exports],
@@ -155,11 +150,16 @@ echo "Options used to compile and link:"
 echo " build OS  = $build_os"
 echo " target OS = $host_os"
 echo
-echo " CC        = $CC"
-echo " CFLAGS    = $CFLAGS"
-echo " CPPFLAGS  = $HARDENED_CPPFLAGS $CPPFLAGS"
-echo " CXX       = $CXX"
-echo " CXXFLAGS  = $RE_CXXFLAGS $HARDENED_CXXFLAGS $WARN_CXXFLAGS $CXXFLAGS"
-echo " LDFLAGS   = $RE_LDFLAGS $HARDENED_LDFLAGS $LDFLAGS"
-echo " PIC_FLAGS = $PIC_FLAGS"
-echo " PIE_FLAGS = $PIE_FLAGS"
+echo " CC          = $CC"
+echo " CFLAGS      = $CFLAGS"
+echo " CPPFLAGS    = $HARDENED_CPPFLAGS $CPPFLAGS"
+echo " CXX         = $CXX"
+echo " CXXFLAGS    = $RE_CXXFLAGS $HARDENED_CXXFLAGS $WARN_CXXFLAGS $CXXFLAGS"
+echo " LDFLAGS     = $RE_LDFLAGS $HARDENED_LDFLAGS $LDFLAGS"
+echo " PIC_FLAGS   = $PIC_FLAGS"
+echo " PIE_FLAGS   = $PIE_FLAGS"
+if test x$use_reduce_exports = xyes; then
+echo " RE_CXXFLAGS = $RE_CXXFLAGS"
+echo " RE_LDFLAGS  = $RE_LDFLAGS"
+fi
+echo
