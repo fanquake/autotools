@@ -89,7 +89,14 @@ case $host in
         ;;
 esac
 
+AC_ARG_ENABLE([hardening],
+  [AS_HELP_STRING([--disable-hardening],
+  [do not attempt to harden the resulting executables (default is to harden when possible)])],
+  [use_hardening=$enableval],
+  [use_hardening=auto])
+
 dnl setup hardening related compile flags and linker options
+if test x$use_hardening != xno; then
 AX_CHECK_COMPILE_FLAG([-Wstack-protector],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -Wstack-protector"],,[[$CXXFLAG_WERROR]])
 AX_CHECK_COMPILE_FLAG([-fstack-protector-all],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-protector-all"],,[[$CXXFLAG_WERROR]])
 dnl TODO: note why this is CXXFLAG_WERROR
@@ -115,6 +122,7 @@ AX_CHECK_LINK_FLAG([[-Wl,-z,now]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,no
 AX_CHECK_LINK_FLAG([[-Wl,-z,separatecode]],[HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-z,separatecode"],,[[$LDFLAG_WERROR]])
 dnl darwin
 AX_CHECK_LINK_FLAG([[-Wl,-bind_at_load]], [HARDENED_LDFLAGS="$HARDENED_LDFLAGS -Wl,-bind_at_load"],,[[$LDFLAG_WERROR]])
+fi
 
 dnl option to reduce exports
 AC_ARG_ENABLE([reduce-exports],
