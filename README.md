@@ -1,6 +1,6 @@
-# Basic Autotools
+# Autotools
 
-The purpose of this project is to demo some basic  auttools usage with modern c++ code.
+Demo some autotools usage with modern C++ code.
 
 A lot of what's done here is based off of the [Bitcoin Core](https://github.com/bitcoin/bitcoin) build system.
 

@@ -89,6 +89,24 @@ case $host in
         ;;
 esac
 
+AC_ARG_ENABLE([dll-hacks],
+  [AS_HELP_STRING([--enable-dll-hacks],
+  [Emulate Windows DLL build hacks from Bitcoin Core])],
+  [enable_dll_hacks=$enableval],
+  [enable_dll_hacks=no])
+
+dnl Emulate the hacks used by Bitcoin Core to produce static DLLs for Windows.
+if test $enable_dll_hacks != xno; then
+lt_cv_deplibs_check_method="pass_all"
+AX_CHECK_LINK_FLAG([[-static]],[LIBTOOL_APP_LDFLAGS="$LIBTOOL_APP_LDFLAGS -all-static"])
+archive_cmds_CXX="\$CC -shared \$libobjs \$deplibs \$compiler_flags -static -o \$output_objdir/\$soname \${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker \$lib"
+postdeps_CXX=
+dnl Required when building DLLs with old GCCs (<= 4.8)
+dnl However this causes duplicate symbol issues, multiple def of __stack_chk_fail
+dnl when cross-compiling using brew installed mingw on macOS.
+AC_CHECK_LIB([ssp],[main],, AC_MSG_ERROR(libssp missing))
+fi
+
 AC_ARG_ENABLE([hardening],
   [AS_HELP_STRING([--disable-hardening],
   [do not attempt to harden the resulting executables (default is to harden when possible)])],
