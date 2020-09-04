@@ -117,6 +117,12 @@ dnl setup hardening related compile flags and linker options
 if test x$use_hardening != xno; then
 AX_CHECK_COMPILE_FLAG([-Wstack-protector],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -Wstack-protector"],,[[$CXXFLAG_WERROR]])
 AX_CHECK_COMPILE_FLAG([-fstack-protector-all],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-protector-all"],,[[$CXXFLAG_WERROR]])
+AX_CHECK_COMPILE_FLAG([-fcf-protection=full],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fcf-protection=full"])
+dnl stack-clash-protection does not work when building for Windows.
+dnl We use the test case from https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90458
+dnl to determine if it can be enabled.
+AX_CHECK_COMPILE_FLAG([-fstack-clash-protection],[HARDENED_CXXFLAGS="$HARDENED_CXXFLAGS -fstack-clash-protection"],[],["-O0"],
+  [AC_LANG_SOURCE([[class D {public: unsigned char buf[32768];}; int main() {D d; return 0;}]])])
 dnl TODO: note why this is CXXFLAG_WERROR
 AX_CHECK_LINK_FLAG([[-fPIE -pie]],[PIE_FLAGS="-fPIE"; HARDENED_LDFLAGS="$HARDENED_LDFLAGS -pie"],,[[$CXXFLAG_WERROR]])
 
