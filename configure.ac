@@ -96,7 +96,7 @@ AC_ARG_ENABLE([dll-hacks],
   [enable_dll_hacks=no])
 
 dnl Emulate the hacks used by Bitcoin Core to produce static DLLs for Windows.
-if test $enable_dll_hacks != xno; then
+if test x$enable_dll_hacks != xno; then
 lt_cv_deplibs_check_method="pass_all"
 AX_CHECK_LINK_FLAG([[-static]],[LIBTOOL_APP_LDFLAGS="$LIBTOOL_APP_LDFLAGS -all-static"])
 archive_cmds_CXX="\$CC -shared \$libobjs \$deplibs \$compiler_flags -static -o \$output_objdir/\$soname \${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker \$lib"
